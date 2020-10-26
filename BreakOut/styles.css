@@ -1,0 +1,45 @@
+* { padding: 0; margin: 0;
+    font-family: "Germania One"; }
+
+/* canvas { background: url('assets/bg.jpg'); display: block; margin: 0 auto;  } */
+
+#canvasdiv{
+    width: 100vw;
+    height: 100vh;
+}
+
+#myCanvas{
+    background-image: url('assets/bg.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    width: 100%;
+    height: 100%;
+    
+}
+
+#gameover{
+    position: absolute;
+    width : 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+#youwon{
+    width: 300px;
+    position: absolute;
+    display: none;
+}
+#youlose{
+    width:400px;
+    position: absolute;
+    display: none;
+}
+#restart{
+    position: absolute;
+    cursor: pointer;
+    font-size: 1.25em;
+    color : #FFF;
+}
