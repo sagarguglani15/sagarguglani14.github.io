@@ -173,8 +173,17 @@ loadAssets();
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
-document.addEventListener("touchstart", mouseMoveHandler);
+// document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("touchstart", touchHandler);
+document.addEventListener("touchmove", touchHandler);
+
+function touchHandler(e){
+    if(e.touches) {
+        paddle.x = e.touches[0].clientX - canvas.offsetLeft - paddle.width / 2;
+        //playerY = e.touches[0].clientY - canvas.offsetTop - paddle.height / 2;
+        e.preventDefault();
+    }
+}
 
 function keyDownHandler(e) {
     if (e.key == "Right" || e.key == "ArrowRight") {
