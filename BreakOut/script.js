@@ -174,10 +174,11 @@ loadAssets();
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
-document.addEventListener("touchstart", touchHandler);
-document.addEventListener("touchmove", touchHandler);
+// document.addEventListener("touchstart", touchHandler, false);
+document.addEventListener("touchmove", touchHandler, false);
 
 function touchHandler(e){
+    console.log(e)
     if(e.touches) {
         let relativeX = e.touches[0].clientX - canvas.offsetLeft;
         if(relativeX>0 && relativeX<canvas.width){
