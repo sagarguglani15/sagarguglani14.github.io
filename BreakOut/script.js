@@ -173,7 +173,7 @@ loadAssets();
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-// document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 document.addEventListener("touchstart", touchHandler);
 document.addEventListener("touchmove", touchHandler);
 
