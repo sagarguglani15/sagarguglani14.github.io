@@ -4,52 +4,52 @@ const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
 const style = {
-    height(){
-        return +getComputedStyle(canvas).getPropertyValue('height').slice(0,-2);
+    height() {
+        return +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
     },
-    width(){
-        return +getComputedStyle(canvas).getPropertyValue('width').slice(0,-2);
+    width() {
+        return +getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
     }
 }
 
-canvas.setAttribute('width', style.width()*dpi);
-canvas.setAttribute('height', style.height()*dpi);
-CanvasRenderingContext2D.prototype.roundedRectangle = function(x, y, width, height, rounded) {
+canvas.setAttribute('width', style.width() * dpi);
+canvas.setAttribute('height', style.height() * dpi);
+CanvasRenderingContext2D.prototype.roundedRectangle = function (x, y, width, height, rounded) {
     const radiansInCircle = 2 * Math.PI
-    const halfRadians = (2 * Math.PI)/2
-    const quarterRadians = (2 * Math.PI)/4  
-    
+    const halfRadians = (2 * Math.PI) / 2
+    const quarterRadians = (2 * Math.PI) / 4
+
     // top left arc
     this.arc(rounded + x, rounded + y, rounded, -quarterRadians, halfRadians, true)
-    
+
     // line from top left to bottom left
     this.lineTo(x, y + height - rounded)
-  
+
     // bottom left arc  
-    this.arc(rounded + x, height - rounded + y, rounded, halfRadians, quarterRadians, true)  
-    
+    this.arc(rounded + x, height - rounded + y, rounded, halfRadians, quarterRadians, true)
+
     // line from bottom left to bottom right
     this.lineTo(x + width - rounded, y + height)
-  
-    // bottom right arc
-    this.arc(x + width - rounded, y + height - rounded, rounded, quarterRadians, 0, true)  
-    
-    // line from bottom right to top right
-    this.lineTo(x + width, y + rounded)  
-  
-    // top right arc
-    this.arc(x + width - rounded, y + rounded, rounded, 0, -quarterRadians, true)  
-    
-    // line from top right to top left
-    this.lineTo(x + rounded, y)  
-  }
 
-const PADDLE_WIDTH = canvas.width/12;
-const PADDLE_MARGIN_BOTTOM = canvas.height/12;
-const PADDLE_HEIGHT = canvas.height/30;
+    // bottom right arc
+    this.arc(x + width - rounded, y + height - rounded, rounded, quarterRadians, 0, true)
+
+    // line from bottom right to top right
+    this.lineTo(x + width, y + rounded)
+
+    // top right arc
+    this.arc(x + width - rounded, y + rounded, rounded, 0, -quarterRadians, true)
+
+    // line from top right to top left
+    this.lineTo(x + rounded, y)
+}
+
+const PADDLE_WIDTH = canvas.width / 12;
+const PADDLE_MARGIN_BOTTOM = canvas.height / 12;
+const PADDLE_HEIGHT = canvas.height / 30;
 const BALL_RADIUS = 8;
-const BRICK_WIDTH = canvas.width/12;
-const BRICK_HEIGHT = canvas.height/20;
+const BRICK_WIDTH = canvas.width / 12;
+const BRICK_HEIGHT = canvas.height / 20;
 const LEVELS = 3;
 
 const bgImage = new Image();
@@ -130,7 +130,7 @@ const ball = {
 
 const brick = {
     rc: 4,
-    cc: Math.floor( canvas.width/(PADDLE_WIDTH+20) ),
+    cc: Math.floor(canvas.width / (PADDLE_WIDTH + 20)),
     width: BRICK_WIDTH,
     height: BRICK_HEIGHT,
     padding: 10,
@@ -156,11 +156,11 @@ const loadAssets = () => {
         bricks[r] = [];
         for (let c = 0; c < brick.cc; c++) {
             bricks[r][c] = { x: 0, y: 0, status: 2 };
-            if(r==0){
+            if (r == 0) {
                 bricks[r][c].fruit = 20;
                 bricks[r][c].color = "#39FF14";
                 bricks[r][c].got = false;
-            }else if(r==1){
+            } else if (r == 1) {
                 bricks[r][c].fruit = 10;
                 bricks[r][c].color = "#FAED27";
                 bricks[r][c].got = false;
@@ -174,19 +174,7 @@ loadAssets();
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
-// document.addEventListener("touchstart", touchHandler, false);
 document.addEventListener("touchmove", touchHandler, false);
-
-function touchHandler(e){
-    console.log(e)
-    if(e.touches) {
-        let relativeX = e.touches[0].clientX - canvas.offsetLeft;
-        if(relativeX>0 && relativeX<canvas.width){
-            paddle.x = e.touches[0].clientX - canvas.offsetLeft - paddle.width / 2;
-            e.preventDefault();
-        }
-    }
-}
 
 function keyDownHandler(e) {
     if (e.key == "Right" || e.key == "ArrowRight") {
@@ -206,13 +194,34 @@ function keyUpHandler(e) {
     }
 }
 
+// function mouseMoveHandler(e) {
+//     let relativeX = e.clientX - canvas.offsetLeft;
+//     if (relativeX > 0 && relativeX < canvas.width && paddle.x>0) {
+//         paddle.x = relativeX - paddle.width / 2;
+//     }
+// }
+
 function mouseMoveHandler(e) {
-    console.log(e)
     let relativeX = e.clientX - canvas.offsetLeft;
-    if (relativeX > 0 && relativeX < canvas.width && paddle.x>0) {
-        paddle.x = relativeX - paddle.width / 2;
+    if (relativeX > 0 && relativeX < canvas.width) {
+        PADDLE.paddleX = relativeX - PADDLE.paddleWidth;
     }
 }
+
+function touchHandler(e) {
+    if (e.touches) {
+        let relativeX = e.touches[0].clientX - canvas.offsetLeft;
+        if (relativeX > 0 && relativeX < canvas.width) {
+            PADDLE.paddleX = e.touches[0].clientX - canvas.offsetLeft - PADDLE.paddleWidth / 2;
+
+            e.preventDefault();
+        }
+
+
+    }
+}
+
+
 function collisionDetection() {
     for (let r = 0; r < brick.rc; r++) {
         for (let c = 0; c < brick.cc; c++) {
@@ -230,7 +239,7 @@ function collisionDetection() {
                     ball.dy = -ball.dy;
                     brickBrokeSound.play();
                     bricks[r][c].status = 0;
-                    if (bricks[r][c].fruit){
+                    if (bricks[r][c].fruit) {
                         fruits.push(bricks[r][c])
                     }
                     player.score++;
@@ -240,7 +249,7 @@ function collisionDetection() {
     }
 }
 
-function resetBall(){
+function resetBall() {
     ball.x = canvas.width / 2;
     ball.y = paddle.y - 10;
     ball.dx = 3 * (Math.random() * 2 - 1);
@@ -248,26 +257,26 @@ function resetBall(){
     paddle.x = (canvas.width - paddle.width) / 2;
 }
 
-function drawLevel(){
+function drawLevel() {
 
-    if (player.level==1){
-        ctx.drawImage(l1Image, canvas.width/2 -20, 20);
-    }else if (player.level==2){
-        ctx.drawImage(l2Image, canvas.width/2 -20, 20);
-    }else if (player.level==3){
-        ctx.drawImage(l3Image, canvas.width/2 -20, 20);
+    if (player.level == 1) {
+        ctx.drawImage(l1Image, canvas.width / 2 - 20, 20);
+    } else if (player.level == 2) {
+        ctx.drawImage(l2Image, canvas.width / 2 - 20, 20);
+    } else if (player.level == 3) {
+        ctx.drawImage(l3Image, canvas.width / 2 - 20, 20);
     }
     // ctx.font = "16px Arial";
     // ctx.fillStyle = "#FFFFFF";
     // ctx.fillText("Level: " + player.level, canvas.width/2, 20);
 }
 
-function drawFruits(){
-    for (reward of fruits){
-        if (!reward.got){
-            if (reward.fruit == 10 && !reward.got){
+function drawFruits() {
+    for (reward of fruits) {
+        if (!reward.got) {
+            if (reward.fruit == 10 && !reward.got) {
                 ctx.drawImage(reward10Image, reward.x, reward.y);
-            }else if(reward.fruit == 20 && !reward.got){
+            } else if (reward.fruit == 20 && !reward.got) {
                 ctx.drawImage(reward20Image, reward.x, reward.y);
             }
         }
@@ -329,9 +338,9 @@ function drawScore() {
 function drawLives() {
     let x = canvas.width - 80;
 
-    for (let i=0; i<player.lives; i++){
+    for (let i = 0; i < player.lives; i++) {
         ctx.drawImage(lifeImage, x, 20);
-        x-=50;
+        x -= 50;
     }
 }
 
@@ -350,39 +359,39 @@ function draw() {
     collisionDetection();
 
     let won = true;
-    for(r=0; r<brick.rc; r++){
-        let flag=0;
-        for(c=0; c<brick.cc; c++){
-            if (bricks[r][c].status!=0){
-                flag=1;
+    for (r = 0; r < brick.rc; r++) {
+        let flag = 0;
+        for (c = 0; c < brick.cc; c++) {
+            if (bricks[r][c].status != 0) {
+                flag = 1;
                 won = false;
             }
         }
-        if(flag==1){
+        if (flag == 1) {
             break;
         }
     }
 
     if (won) {
 
-        if (player.level >= LEVELS){
+        if (player.level >= LEVELS) {
             gameWonSound.play();
             showYouWin();
             // alert(`YOU WIN, CONGRATS! Score = ${player.score}`);
             clearInterval(interval);
             return;
             // document.location.reload();
-        }else{
+        } else {
             levelUpSound.play();
-            player.level+=1
-            player.score+=50;
+            player.level += 1
+            player.score += 50;
             player.lives = 5;
-            brick.rc+=1;
-            ball.speed+=2;
+            brick.rc += 1;
+            ball.speed += 2;
             resetBall();
             loadAssets();
         }
-        
+
     }
 
     if ((ball.x + ball.radius) > canvas.width || (ball.x - ball.radius) < 0) {
@@ -393,7 +402,7 @@ function draw() {
         ball.dy = -ball.dy;
         wallHitSound.play();
     }
-    else if(ball.y<paddle.y){
+    else if (ball.y < paddle.y) {
 
     }
     else if (ball.y > paddle.y && ball.x > paddle.x && ball.x < (paddle.x + paddle.width)) {
@@ -406,7 +415,7 @@ function draw() {
         ball.dx = ball.speed * Math.sin(angle);
         ball.dy = -ball.dy
     }
-    else if ( (ball.y + ball.radius) > canvas.height) {
+    else if ((ball.y + ball.radius) > canvas.height) {
         player.lives--;
         lifeLostSound.play();
         if (!player.lives) {
@@ -422,34 +431,34 @@ function draw() {
         }
     }
 
-    for (i in fruits){
-        if( fruits[i].y <= paddle.y){
-            fruits[i].y+=1;
-        }else if(paddle.y < fruits[i].y && fruits[i].y < (paddle.y + paddle.height)){
-            if(paddle.x < fruits[i].x && fruits[i].x < (paddle.x + paddle.width)){
+    for (i in fruits) {
+        if (fruits[i].y <= paddle.y) {
+            fruits[i].y += 1;
+        } else if (paddle.y < fruits[i].y && fruits[i].y < (paddle.y + paddle.height)) {
+            if (paddle.x < fruits[i].x && fruits[i].x < (paddle.x + paddle.width)) {
                 fruitSound.play();
-                if(fruits[i].fruit == 20 && !fruits[i].got){
+                if (fruits[i].fruit == 20 && !fruits[i].got) {
                     paddle.color = "#39FF14";
-                    player.score+=20;
-                    fruits[i].got=true;
-                }else if(fruits[i].fruit == 10 && !fruits[i].got){
+                    player.score += 20;
+                    fruits[i].got = true;
+                } else if (fruits[i].fruit == 10 && !fruits[i].got) {
                     paddle.color = "#FAED27";
-                    player.score+=10;
+                    player.score += 10;
                     fruits[i].got = true;
                 }
             }
-            
-            fruits[i].y+=1
+
+            fruits[i].y += 1
         }
     }
-    fruits = fruits.filter( (reward)=>{
-        if (reward.y >= (paddle.y + paddle.height)){
+    fruits = fruits.filter((reward) => {
+        if (reward.y >= (paddle.y + paddle.height)) {
             return false
-        }else{
+        } else {
             return true
         }
     });
-    
+
 
     if (keyStatus.rightPressed && paddle.x < (canvas.width - paddle.width)) {
         paddle.x += paddle.dx;
@@ -469,16 +478,16 @@ const youwin = document.getElementById("youwin");
 const youlose = document.getElementById("youlose");
 const restart = document.getElementById("restart");
 
-restart.addEventListener("click", function(){
+restart.addEventListener("click", function () {
     location.reload(); // reload the page
 })
 
-function showYouWin(){
+function showYouWin() {
     gameover.style.display = "flex";
     youwon.style.display = "block";
 }
 
-function showYouLose(){
+function showYouLose() {
     gameover.style.display = "flex";
     youlose.style.display = "block";
 }
