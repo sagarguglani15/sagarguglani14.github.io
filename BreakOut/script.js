@@ -197,6 +197,7 @@ function keyUpHandler(e) {
 
 
 function mouseMoveHandler(e) {
+    console.log('mmh')
     let relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 && relativeX < canvas.width) {
         paddle.x = relativeX - paddle.width;
@@ -210,6 +211,7 @@ function mouseMoveHandler(e) {
 }
 
 function touchHandler(e) {
+    console.log('tmh')
     if (e.touches) {
         let relativeX = e.touches[0].clientX - canvas.offsetLeft;
         if (relativeX > 0 && relativeX < canvas.width) {
