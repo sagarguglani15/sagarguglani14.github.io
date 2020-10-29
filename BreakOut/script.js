@@ -156,11 +156,12 @@ const loadAssets = () => {
         bricks[r] = [];
         for (let c = 0; c < brick.cc; c++) {
             bricks[r][c] = { x: 0, y: 0, status: 2 };
-            if (r == 0) {
+            let randNum = Math.floor(Math.random()*11)
+            if (randNum == 2) {
                 bricks[r][c].fruit = 20;
                 bricks[r][c].color = "#39FF14";
                 bricks[r][c].got = false;
-            } else if (r == 1) {
+            } else if (randNum == 7) {
                 bricks[r][c].fruit = 10;
                 bricks[r][c].color = "#FAED27";
                 bricks[r][c].got = false;
@@ -194,17 +195,17 @@ function keyUpHandler(e) {
     }
 }
 
-// function mouseMoveHandler(e) {
-//     let relativeX = e.clientX - canvas.offsetLeft;
-//     if (relativeX > 0 && relativeX < canvas.width && paddle.x>0) {
-//         paddle.x = relativeX - paddle.width / 2;
-//     }
-// }
 
 function mouseMoveHandler(e) {
     let relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 && relativeX < canvas.width) {
-        PADDLE.paddleX = relativeX - PADDLE.paddleWidth;
+        paddle.x = relativeX - paddle.width;
+    }
+    if(paddle.x<0){
+        paddle.x=0;
+    }
+    if((paddle.x + paddle.width) >canvas.width){
+        paddle.x = canvas.width - paddle.width;
     }
 }
 
@@ -212,7 +213,7 @@ function touchHandler(e) {
     if (e.touches) {
         let relativeX = e.touches[0].clientX - canvas.offsetLeft;
         if (relativeX > 0 && relativeX < canvas.width) {
-            PADDLE.paddleX = e.touches[0].clientX - canvas.offsetLeft - PADDLE.paddleWidth / 2;
+            paddle.x = e.touches[0].clientX - canvas.offsetLeft - paddle.width / 2;
 
             e.preventDefault();
         }
@@ -319,9 +320,21 @@ function drawBricks() {
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brick.width, brick.height);
                 if (bricks[r][c].status == 2) {
-                    ctx.fillStyle = big;
+                    if(bricks[r][c].fruit==20){
+                        ctx.fillStyle = "#003366";
+                    }else if(bricks[r][c].fruit==10){
+                        ctx.fillStyle = "#0B5345";
+                    }else{
+                        ctx.fillStyle = "#D35400";
+                    }
                 } else if (bricks[r][c].status == 1) {
-                    ctx.fillStyle = small;
+                    if(bricks[r][c].fruit==20){
+                        ctx.fillStyle = "#99CCFF";
+                    }else if(bricks[r][c].fruit==10){
+                        ctx.fillStyle = "#59D68D";
+                    }else{
+                        ctx.fillStyle = "#EB984E";
+                    }
                 }
                 ctx.fill();
                 ctx.closePath();
