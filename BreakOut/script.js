@@ -44,13 +44,37 @@ CanvasRenderingContext2D.prototype.roundedRectangle = function (x, y, width, hei
     this.lineTo(x + rounded, y)
 }
 
+function Rotate()
+{
+  if("orientation" in screen) {
+    if(document.documentElement.requestFullscreen) 
+    {
+      document.documentElement.requestFullscreen();
+    } 
+    else if( document.documentElement.mozRequestFullscreen ) 
+    {
+      document.documentElement.mozRequestFullscreen();
+    } 
+    else if( document.documentElement.webkitRequestFullscreen ) {
+      document.documentElement.webkitRequestFullscreen();
+    } 
+    else {
+      document.documentElement.msRequestFullscreen();
+    } 
+
+    screen.orientation.lock('landscape-primary');
+  }
+  
+}
+
 const PADDLE_WIDTH = canvas.width / 12;
 const PADDLE_MARGIN_BOTTOM = canvas.height / 12;
 const PADDLE_HEIGHT = canvas.height / 30;
-const BALL_RADIUS = 8;
+const BALL_RADIUS = canvas.height/60;
 const BRICK_WIDTH = canvas.width / 12;
 const BRICK_HEIGHT = canvas.height / 20;
 const LEVELS = 3;
+let difficulty = 150;
 
 const bgImage = new Image();
 bgImage.src = "assets/bg.jpg";
@@ -124,18 +148,18 @@ const ball = {
     y: paddle.y - BALL_RADIUS,
     radius: BALL_RADIUS,
     speed: 4,
-    dx: 3 * (Math.random() * 2 - 1),
-    dy: -3
+    dx: canvas.height / difficulty * (Math.random() * 2 - 1),
+    dy: - (canvas.height / difficulty)
 }
 
 const brick = {
     rc: 4,
-    cc: Math.floor(canvas.width / (PADDLE_WIDTH + 20)),
+    cc: Math.floor(canvas.width / (PADDLE_WIDTH + canvas.width/90)),
     width: BRICK_WIDTH,
     height: BRICK_HEIGHT,
-    padding: 10,
-    top: 75,
-    left: 40
+    padding: canvas.width/90,
+    top: canvas.height/8,
+    left: canvas.width/40
 }
 
 const player = {
@@ -156,7 +180,7 @@ const loadAssets = () => {
         bricks[r] = [];
         for (let c = 0; c < brick.cc; c++) {
             bricks[r][c] = { x: 0, y: 0, status: 2 };
-            let randNum = Math.floor(Math.random()*11)
+            let randNum = Math.floor(Math.random() * 11)
             if (randNum == 2) {
                 bricks[r][c].fruit = 20;
                 bricks[r][c].color = "#39FF14";
@@ -195,33 +219,34 @@ function keyUpHandler(e) {
     }
 }
 
-
 function mouseMoveHandler(e) {
-    console.log('mmh')
     let relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 && relativeX < canvas.width) {
         paddle.x = relativeX - paddle.width;
     }
-    if(paddle.x<0){
-        paddle.x=0;
+    if (paddle.x < 0) {
+        paddle.x = 0;
     }
-    if((paddle.x + paddle.width) >canvas.width){
+    if ((paddle.x + paddle.width) > canvas.width) {
         paddle.x = canvas.width - paddle.width;
     }
 }
 
 function touchHandler(e) {
-    console.log('tmh')
     if (e.touches) {
-        let relativeX = e.touches[0].clientX - canvas.offsetLeft;
-        if (relativeX > 0 && relativeX < canvas.width) {
-            paddle.x = e.touches[0].clientX - canvas.offsetLeft - paddle.width / 2;
-
-            e.preventDefault();
+        if (e.touches[0].clientX < 0) {
+            paddle.x = 0;
         }
-
-
+        else if (e.touches[0].clientX > (canvas.width - paddle.width)/dpi) {
+            paddle.x = canvas.width - paddle.width;
+        } else {
+            paddle.x = ( e.touches[0].clientX - canvas.offsetLeft )* dpi;
+        }
     }
+}
+
+function scalePreserveAspectRatio(imgW,imgH,maxW,maxH){
+    return(Math.min((maxW/imgW),(maxH/imgH)));
 }
 
 
@@ -255,8 +280,8 @@ function collisionDetection() {
 function resetBall() {
     ball.x = canvas.width / 2;
     ball.y = paddle.y - 10;
-    ball.dx = 3 * (Math.random() * 2 - 1);
-    ball.dy = -3;
+    ball.dx = canvas.height / difficulty * (Math.random() * 2 - 1);
+    ball.dy = -(canvas.height / difficulty);
     paddle.x = (canvas.width - paddle.width) / 2;
 }
 
@@ -269,9 +294,6 @@ function drawLevel() {
     } else if (player.level == 3) {
         ctx.drawImage(l3Image, canvas.width / 2 - 20, 20);
     }
-    // ctx.font = "16px Arial";
-    // ctx.fillStyle = "#FFFFFF";
-    // ctx.fillText("Level: " + player.level, canvas.width/2, 20);
 }
 
 function drawFruits() {
@@ -303,16 +325,6 @@ function drawPaddle() {
 function drawBricks() {
     let big, small;
     for (let r = 0; r < brick.rc; r++) {
-        if (r == 0) {
-            big = "#003366";
-            small = "#99CCFF";
-        } else if (r == 1) {
-            big = "#0B5345";
-            small = "#59D68D";
-        } else {
-            big = "#D35400";
-            small = "#EB984E";
-        }
         for (let c = 0; c < brick.cc; c++) {
             if (bricks[r][c].status != 0) {
                 let brickX = (c * (brick.width + brick.padding)) + brick.left;
@@ -322,19 +334,19 @@ function drawBricks() {
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brick.width, brick.height);
                 if (bricks[r][c].status == 2) {
-                    if(bricks[r][c].fruit==20){
+                    if (bricks[r][c].fruit == 20) {
                         ctx.fillStyle = "#003366";
-                    }else if(bricks[r][c].fruit==10){
+                    } else if (bricks[r][c].fruit == 10) {
                         ctx.fillStyle = "#0B5345";
-                    }else{
+                    } else {
                         ctx.fillStyle = "#D35400";
                     }
                 } else if (bricks[r][c].status == 1) {
-                    if(bricks[r][c].fruit==20){
+                    if (bricks[r][c].fruit == 20) {
                         ctx.fillStyle = "#99CCFF";
-                    }else if(bricks[r][c].fruit==10){
+                    } else if (bricks[r][c].fruit == 10) {
                         ctx.fillStyle = "#59D68D";
-                    }else{
+                    } else {
                         ctx.fillStyle = "#EB984E";
                     }
                 }
@@ -362,8 +374,8 @@ function drawLives() {
 
 function draw() {
     // gameStartSound.play();
+    Rotate();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // ctx .drawImage(bgImage, 0, 0)
     drawBricks();
     drawBall();
     drawPaddle();
@@ -392,10 +404,8 @@ function draw() {
         if (player.level >= LEVELS) {
             gameWonSound.play();
             showYouWin();
-            // alert(`YOU WIN, CONGRATS! Score = ${player.score}`);
             clearInterval(interval);
             return;
-            // document.location.reload();
         } else {
             levelUpSound.play();
             player.level += 1
@@ -436,9 +446,7 @@ function draw() {
         if (!player.lives) {
             gameOverSound.play();
             showYouLose();
-            // alert('Game over');
             clearInterval(interval);
-            // document.location.reload();
             return;
         }
         else {
@@ -448,7 +456,7 @@ function draw() {
 
     for (i in fruits) {
         if (fruits[i].y <= paddle.y) {
-            fruits[i].y += 1;
+            fruits[i].y += canvas.height/260;
         } else if (paddle.y < fruits[i].y && fruits[i].y < (paddle.y + paddle.height)) {
             if (paddle.x < fruits[i].x && fruits[i].x < (paddle.x + paddle.width)) {
                 fruitSound.play();
@@ -463,7 +471,7 @@ function draw() {
                 }
             }
 
-            fruits[i].y += 1
+            fruits[i].y += canvas.height/260;
         }
     }
     fruits = fruits.filter((reward) => {
@@ -494,7 +502,7 @@ const youlose = document.getElementById("youlose");
 const restart = document.getElementById("restart");
 
 restart.addEventListener("click", function () {
-    location.reload(); // reload the page
+    location.reload();
 })
 
 function showYouWin() {
