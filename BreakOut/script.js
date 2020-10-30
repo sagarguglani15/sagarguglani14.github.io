@@ -397,7 +397,7 @@ function drawLives() {
 
 function draw() {
     // gameStartSound.play();
-    // Rotate();
+    Rotate();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
     drawBall();
