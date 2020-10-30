@@ -2,6 +2,11 @@ const dpi = window.devicePixelRatio;
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
+const welcome = document.getElementById("welcome");
+
+let difficulty = 150;
+let interval;
+
 
 const style = {
     height() {
@@ -74,7 +79,6 @@ const BALL_RADIUS = canvas.height/60;
 const BRICK_WIDTH = canvas.width / 12;
 const BRICK_HEIGHT = canvas.height / 20;
 const LEVELS = 3;
-let difficulty = 150;
 
 const bgImage = new Image();
 bgImage.src = "assets/bg.jpg";
@@ -196,10 +200,29 @@ const loadAssets = () => {
 
 loadAssets();
 
+const start = document.getElementById("start");
+start.addEventListener('click', startGame);
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 document.addEventListener("touchmove", touchHandler, false);
+
+function startGame(){
+    player.name = document.getElementById("name").value;
+    let mode = document.getElementById("difficulty").value;
+    if (mode=='hard'){
+        difficulty = 110;    
+    }else if(mode=='low'){
+        difficulty = 190;
+    }else{
+        difficulty = 150;
+    }
+    ball.dx = canvas.height / difficulty * (Math.random() * 2 - 1);
+    ball.dy = - (canvas.height / difficulty);
+    // player.difficulty = document.getElementById("difficulty").value;
+    welcome.style.display = "none";
+    interval = setInterval(draw,10);
+}
 
 function keyDownHandler(e) {
     if (e.key == "Right" || e.key == "ArrowRight") {
@@ -374,7 +397,7 @@ function drawLives() {
 
 function draw() {
     // gameStartSound.play();
-    Rotate();
+    // Rotate();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
     drawBall();
@@ -494,7 +517,7 @@ function draw() {
     ball.y += ball.dy;
 }
 
-var interval = setInterval(draw, 10);
+// var interval = setInterval(draw, 10);
 
 const gameover = document.getElementById("gameover");
 const youwin = document.getElementById("youwin");

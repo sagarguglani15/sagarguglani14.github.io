@@ -11,7 +11,20 @@
 </head>
 
 <body>
+  <div class="welcome" id="welcome">
+    <h1 class="head">WELCOME</h1>
+    <input class = "name" id="name" placeholder="Enter your name"/>
 
+    <div class="diff">
+      <h3 class="label">Choose difficulty: </h3>
+      <select name="difficulty" id="difficulty">
+        <option value="hard">Hard</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+    </div>    
+    <button class="start" id="start">Start Game</button>
+  </div>
   <div id="gameover">
     <img src="assets/youwon.png" alt="" id="youwon">
     <img src="assets/gameover.png" alt="" id="youlose">

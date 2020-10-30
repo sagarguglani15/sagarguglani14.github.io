@@ -3,6 +3,74 @@
 
 /* canvas { background: url('assets/bg.jpg'); display: block; margin: 0 auto;  } */
 
+.welcome{
+    align-items: center;
+    padding-top: 10%;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-image: url('assets/bg.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    width: 100%;
+    height: 100%;
+}
+
+h1{
+    font-size: 40px;
+    color: #ffffff;
+    font: #ffffff;
+    text-align: center;
+    width: 30%;
+    padding: 20px 20px;
+}
+
+.name{
+    padding: 20px 20px;
+    width: 30%;
+    text-align: center;
+    font-size: 30px;
+    border-radius: 20px;
+}
+
+.start{
+    margin-top: 10px;
+    background-color: greenyellow;
+    border: none;
+    font-size: 20px;
+    border-radius: 20px;
+    width: 30%;
+    padding: 20px 20px;
+    opacity: 70%;
+}
+
+.label{
+    padding: 20px 20px;
+    text-align: center;
+    font-size: 25px;
+}
+
+.diff{
+    display: flex;
+    justify-content: center;
+}
+
+#difficulty{
+    margin-top: 10px;
+    font-size: 30px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.start:hover{
+    cursor: pointer;
+    opacity: 100%;
+    font-size: 22px;
+}
+
 #canvasdiv{
     width: 100vw;
     height: 100vh;
