@@ -193,8 +193,7 @@ const loadAssets = () => {
             let randNum = Math.floor(Math.random() * 11)
             if (r==randR && c==randC){
                 bricks[r][c]['bomb'] = true;
-                bricks[r][c].status = 1;
-                bricks[r][c].color = "#4E0707";
+                bricks[r][c].color = "#FFFFFF";
             }
             else if (randNum == 2) {
                 bricks[r][c].fruit = 20;
@@ -289,6 +288,73 @@ function collisionDetection() {
                     bricks[r][c].status = 1;
                     ball.dy = -ball.dy;
                     brickHitSound.play();
+                    if(bricks[r][c].bomb){
+                        bricks[r][c].color = "#4E0707";
+                        try{
+                            bricks[r-1][c-1].near = true;
+                            if(bricks[r-1][c-1].status == 2){
+                                bricks[r-1][c-1].status = 1;
+                            }
+                            bricks[r-1][c-1].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r-1][c].near = true;
+                            if(bricks[r-1][c].status == 2){
+                                bricks[r-1][c].status = 1;
+                            }
+                            bricks[r-1][c].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r-1][c+1].near = true;
+                            if(bricks[r-1][c+1].status == 2){
+                                bricks[r-1][c+1].status = 1;
+                            }
+                            bricks[r-1][c+1].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r][c+1].near = true;
+                            if(bricks[r][c+1].status == 2){
+                                bricks[r][c+1].status = 1;
+                            }
+                            bricks[r][c+1].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r+1][c+1].near = true;
+                            if(bricks[r+1][c+1].status == 2){
+                                bricks[r+1][c+1].status = 1;
+                            }                            
+                            bricks[r+1][c+1].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r+1][c].near = true;
+                            if(bricks[r+1][c].status == 2){
+                                bricks[r+1][c].status = 1;
+                            }
+                            bricks[r+1][c].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r+1][c-1].near = true;
+                            if(bricks[r+1][c-1].status == 2){
+                                bricks[r+1][c-1].status = 1;
+                            }
+                            bricks[r+1][c-1].color = "#8A05F9";
+                        }
+                        catch{}
+                        try{
+                            bricks[r][c-1].near = true;
+                            if(bricks[r][c-1].status == 2){
+                                bricks[r][c-1].status = 1;
+                            }
+                            bricks[r][c-1].color = "#8A05F9";
+                        }
+                        catch{}
+                    }
                 }
             }
             else if (b.status == 1) {
@@ -332,6 +398,7 @@ function collisionDetection() {
                         brickBrokeSound.play();
                     }
                     bricks[r][c].status = 0;
+                    // bricks[r][c].near = false;
                     if (bricks[r][c].fruit) {
                         fruits.push(bricks[r][c])
                     }
@@ -399,10 +466,33 @@ function drawBricks() {
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brick.width, brick.height);
                 if(bricks[r][c].bomb){
-                    if(bricks[r][c].color == "#7E2811"){
-                        bricks[r][c].color = "#4E0707";
+                    if(bricks[r][c].status == 1 ){
+                        if(bricks[r][c].color == "#7E2811"){
+                            bricks[r][c].color = "#4E0707";
+                        }else{
+                            bricks[r][c].color = "#7E2811";
+                        }
+                        ctx.fillStyle = bricks[r][c].color;
+                    }
+                    else if(bricks[r][c].status == 2){
+                        // if(bricks[r][c].color == "#000000"){
+                        //     bricks[r][c].color = "#FFFFFF";
+                        // }else{
+                        //     bricks[r][c].color = "#000000";
+                        // }
+                        ctx.fillStyle = bricks[r][c].color;
+                    }
+                }else if(bricks[r][c].near==true){
+                    if(bricks[r][c].color == "#8A05F9"){
+                        bricks[r][c].color = "#F90505";
+                    }else if(bricks[r][c].color == "#F90505"){
+                        bricks[r][c].color = "#DFFD05";
+                    }else if(bricks[r][c].color == "#DFFD05"){
+                        bricks[r][c].color = "#05F978";
+                    }else if(bricks[r][c].color == "#05F978"){
+                        bricks[r][c].color = "#F905BE";
                     }else{
-                        bricks[r][c].color = "#7E2811";
+                        bricks[r][c].color = "#8A05F9";
                     }
                     ctx.fillStyle = bricks[r][c].color;
                 }
