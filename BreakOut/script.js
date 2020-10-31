@@ -132,6 +132,9 @@ fruitSound.src = "assets/fruit.mp3"
 const gameOverSound = new Audio();
 gameOverSound.src = "assets/gameOver.mp3";
 
+const bombSound = new Audio();
+bombSound.src = "assets/explosion.mp3";
+
 // function Paddle(){
 //     this.x = 
 // } 
@@ -181,18 +184,25 @@ const keyStatus = {
 let bricks = [];
 var fruits = [];
 const loadAssets = () => {
+    let randR = Math.floor(Math.random() * (brick.rc));
+    let randC = Math.floor(Math.random() * (brick.cc+1));
     for (let r = 0; r < brick.rc; r++) {
         bricks[r] = [];
         for (let c = 0; c < brick.cc; c++) {
             bricks[r][c] = { x: 0, y: 0, status: 2 };
             let randNum = Math.floor(Math.random() * 11)
-            if (randNum == 2) {
+            if (r==randR && c==randC){
+                bricks[r][c]['bomb'] = true;
+                bricks[r][c].status = 1;
+                bricks[r][c].color = "#4E0707";
+            }
+            else if (randNum == 2) {
                 bricks[r][c].fruit = 20;
-                bricks[r][c].color = "#39FF14";
+                // bricks[r][c].color = "#39FF14";
                 bricks[r][c].got = false;
             } else if (randNum == 7) {
                 bricks[r][c].fruit = 10;
-                bricks[r][c].color = "#FAED27";
+                // bricks[r][c].color = "#FAED27";
                 bricks[r][c].got = false;
             }
         }
@@ -269,11 +279,6 @@ function touchHandler(e) {
     }
 }
 
-function scalePreserveAspectRatio(imgW,imgH,maxW,maxH){
-    return(Math.min((maxW/imgW),(maxH/imgH)));
-}
-
-
 function collisionDetection() {
     for (let r = 0; r < brick.rc; r++) {
         for (let c = 0; c < brick.cc; c++) {
@@ -289,7 +294,43 @@ function collisionDetection() {
             else if (b.status == 1) {
                 if ((ball.x + ball.radius) > b.x && (ball.x - ball.radius) < (b.x + brick.width) && (ball.y + ball.radius) > b.y && (ball.y - ball.radius) < (b.y + brick.height)) {
                     ball.dy = -ball.dy;
-                    brickBrokeSound.play();
+                    if(bricks[r][c].bomb){
+                        bombSound.play();
+                        try{
+                            bricks[r-1][c-1].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r-1][c].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r-1][c+1].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r][c+1].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r+1][c+1].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r+1][c].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r+1][c-1].status = 0;
+                        }
+                        catch{}
+                        try{
+                            bricks[r][c-1].status = 0;
+                        }
+                        catch{}
+                    }else{
+                        brickBrokeSound.play();
+                    }
                     bricks[r][c].status = 0;
                     if (bricks[r][c].fruit) {
                         fruits.push(bricks[r][c])
@@ -357,7 +398,15 @@ function drawBricks() {
                 bricks[r][c].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brick.width, brick.height);
-                if (bricks[r][c].status == 2) {
+                if(bricks[r][c].bomb){
+                    if(bricks[r][c].color == "#7E2811"){
+                        bricks[r][c].color = "#4E0707";
+                    }else{
+                        bricks[r][c].color = "#7E2811";
+                    }
+                    ctx.fillStyle = bricks[r][c].color;
+                }
+                else if (bricks[r][c].status == 2) {
                     if (bricks[r][c].fruit == 20) {
                         ctx.fillStyle = "#003366";
                     } else if (bricks[r][c].fruit == 10) {
