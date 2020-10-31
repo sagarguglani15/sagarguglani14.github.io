@@ -384,7 +384,7 @@ function drawScore() {
     ctx.drawImage(coinImage, 20, 10)
     ctx.font = "30px Arial bold";
     ctx.fillStyle = "#FFFFFF";
-    ctx.fillText(player.score, 60, 40);
+    ctx.fillText(`${player.score}  \t\t\tWelcome ${player.name}  `, 60, 40);
 }
 function drawLives() {
     let x = canvas.width - 80;
