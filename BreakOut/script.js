@@ -185,7 +185,7 @@ let bricks = [];
 var fruits = [];
 const loadAssets = () => {
     let randR = Math.floor(Math.random() * (brick.rc));
-    let randC = Math.floor(Math.random() * (brick.cc+1));
+    let randC = Math.floor(Math.random() * (brick.cc));
     for (let r = 0; r < brick.rc; r++) {
         bricks[r] = [];
         for (let c = 0; c < brick.cc; c++) {
